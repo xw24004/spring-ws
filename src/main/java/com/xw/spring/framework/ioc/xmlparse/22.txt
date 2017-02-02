@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?><job><dependresource id="8006573e-ac37-43ce-b0b2-9ee5611c1985"><private/><public/></dependresource><executetemplate id="1"><template id="c2023e88-45e4-40f6-9d4d-470d0814a734" path="/user/cbt/resourcesdomain/hivecommon/GlobalVariable.py"/><template id="22dd04c1-704f-4240-9a2c-706a26e4ba81" path="/user/cbt/resourcesdomain/hivecommon/defaultExecutor.py"/><template id="88604919-838a-4259-b1c6-cc53c2321c7b"/></executetemplate><hql databaseName="default" id="5326ba07-9dcf-439c-9680-828900420f63"><hqlcdata>&lt;![CDATA[--@author:sxl
+--@modifydate:2016-11-10
+--@desc:仓库保管对外对账单计费明细汇总明细表
+--@copyright suning
+
+-- 切换模式
+use lbi_dpa;
+
+-- 设置作业名
+set mapred.job.name = t_fi_dwms_out_sk_bill_detail_d;
+-- hive自动根据sql，选择使用common join或者map join
+set hive.auto.convert.join = false;
+
+-------------------sql处理---------------------
+--计费类型=26（按面积计费）
+--以计费明细为主表，按照对账单ACCOUNT_NO+对账单行号LINE_ITEM为主键，汇总计费数量ZPIKMG；并用对账单号内关联对账单抬头，取相关信息
+--@sqlstep: 01. 删除临时表 t_fi_dwms_out_sk_bill_detail_d_tmp01
+drop table if exists lbi_dpa.t_fi_dwms_out_sk_bill_detail_d_tmp01;
+
+--@sqlstep: 02. 生成临时表 t_fi_dwms_out_sk_bill_detail_d_tmp01
+create table lbi_dpa.t_fi_dwms_out_sk_bill_detail_d_tmp01
+stored as rcfile as
+select a.account_no          , --对账单
+       a.line_item           , --对账单行号
+       '' as matnr           , --物料号
+       '' as piece           , --件数
+       '' as vol             , --体积
+       '' as brgew           , --重量
+       sum(a.zpikmg) as zpikmg , --计费数量
+       max(a.unit) as unit, --计费单位
+       sum(a.price_dis) as settle_price , --总金额
+       sum(a.price_dis)/1.06 as amt_after_tax , --净金额
+       max(a.werks) as werks , --物流中心
+       '' as lgort           , --库位
+       '' as property        , --商品属性
+       max(a.jflx      ) as jflx      , --计费类型
+       max(a.vkorg     ) as vkorg     , --销售组织
+       max(a.KUNNR      ) as cust      , --客户
+       max(a.cust_tp   ) as cust_tp   , --客户属性
+       max(a.zjsdat    ) as zjsdat    , --结算日期
+       max(a.serv_tp   ) as serv_tp   , --服务大类
+       max(a.incom_tp  ) as incom_tp  , --收入项
+       max(a.serv_prod ) as serv_prod , --服务产品
+       max(a.serv_dtl  ) as serv_dtl  , --服务细节
+       --max(a.warehouse ) as warehouse , --营销分析中心仓
+       max(a.area      ) as area      , --营销分析区域
+       max(a.company   ) as company   , --引进公司
+       max(a.type      ) as type        --业务类型
+  from lbi_sor.t_fi_dwms_out_sk_bill_detail_mid_d a  
+ where a.jflx = '26'
+   and a.statis_date = '${hivevar:statis_date}'
+ group by a.account_no,a.line_item;
+
+-------------------sql处理---------------------
+--对计费明细以对账单ACCOUNT_NO+对账单行号LINE_ITEM汇总折旧后金额(SUM(PRICE_DIS))
+--@sqlstep: 03. 删除临时表 t_fi_dwms_out_sk_bill_detail_d_tmp02
+drop table if exists lbi_dpa.t_fi_dwms_out_sk_bill_detail_d_tmp02;
+
+--@sqlstep: 04. 生成临时表 t_fi_dwms_out_sk_bill_detail_d_tmp02
+create table lbi_dpa.t_fi_dwms_out_sk_bill_detail_d_tmp02
+stored as rcfile as
+select a.account_no       ,		--对账单号
+	   a.line_item        ,     --对账单行号
+       sum(a.price_dis) as price_dis_t --折旧金额汇总
+  from lbi_sor.t_fi_dwms_out_sk_bill_detail_mid_d a
+ where a.jflx in ('28','29')
+    and a.statis_date = '${hivevar:statis_date}'
+ group by a.account_no       ,
+	      a.line_item        ;
+          
+		  
+-------------------sql处理---------------------
+--汇总的作业明细以对账单ACCOUNT_NO+对账单行号LINE_ITEM关联汇总的计费明细取折扣后金额，并乘以拆分系数得总金额，计算净金额=总金额/1.06
+--@sqlstep: 03. 删除临时表 t_fi_dwms_out_sk_bill_detail_d_tmp03
+drop table if exists lbi_dpa.t_fi_dwms_out_sk_bill_detail_d_tmp03;
+
+--@sqlstep: 04. 生成临时表 t_fi_dwms_out_sk_bill_detail_d_tmp03
+create table lbi_dpa.t_fi_dwms_out_sk_bill_detail_d_tmp03
+stored as rcfile as
+select a.account_no          , --对账单
+       a.line_item           , --对账单行号
+       c.matnr               , --物料号
+       c.piece               , --件数
+       c.vol                 , --体积
+       c.brgew              , --重量
+       (case when b.jflx='28' then c.piece 
+	         else c.vol* c.piece 
+	    end) as zpikmg, --计费数量
+       b.unit, --计费单位
+       (case when b.jflx='28' then a.price_dis_t*(c.piece/c.piece_t)
+	         else a.price_dis_t*(c.vol/c.vol_t)
+	    end) as settle_price , --总金额
+       (case when b.jflx='28' then a.price_dis_t*(c.piece/c.piece_t)/1.06
+	         else a.price_dis_t*(c.vol/c.vol_t)/1.06
+	    end) as amt_after_tax , --净金额
+       b.werks               , --物流中心
+       b.lgort           	 , --库位
+       d.extnd_field_1   as property  , --商品属性
+       b.jflx                , --计费类型
+       b.vkorg               , --销售组织
+       b.kunnr     as cust    , --客户
+       b.cust_tp             , --客户属性
+       b.zjsdat              , --结算日期
+       b.serv_tp             , --服务大类
+       b.incom_tp            , --收入项
+       b.serv_prod           , --服务产品
+       b.serv_dtl            , --服务细节
+       --b.warehouse           , --营销分析中心仓
+       b.area                , --营销分析区域
+       b.company             , --引进公司
+       b.type                  --业务类型
+  from lbi_dpa.t_fi_dwms_out_sk_bill_detail_d_tmp02 a
+  left join lbi_sor.t_fi_dwms_out_sk_bill_detail_mid_d b
+    on a.account_no = b.account_no and a.line_item = b.line_item
+  left join lbi_sor.t_fi_dwms_out_sk_work_detail_mid_d c
+    on a.account_no = c.account_no 
+   and a.line_item = c.line_item 
+   and b.material = c.matnr
+  left join lbi.tsor_pub_gds_info d
+    on b.material = d.gds_cd
+ where b.account_no is not null
+   and c.account_no is not null 
+   and b.statis_date='${hivevar:statis_date}'
+   and c.statis_date='${hivevar:statis_date}';
+
+--@SqlStep: 03.生成目标表 t_fi_dwms_out_sk_bill_detail_d
+insert overwrite table lbi_dpa.t_fi_dwms_out_sk_bill_detail_d
+partition(statis_date = '${hivevar:statis_date}')
+select t1.account_no		,
+       t1.line_item        ,
+       t1.matnr            ,
+       t1.piece            ,
+       t1.vol              ,
+       t1.brgew            ,
+       t1.zpikmg           ,
+       t1.unit             ,
+       t1.settle_price     ,
+       t1.amt_after_tax    ,
+       t1.werks            ,
+       t1.lgort            ,
+       t1.property         ,
+       t1.jflx             ,
+       t1.vkorg            ,
+       t1.cust             ,
+       t1.cust_tp          ,
+       t1.zjsdat           ,
+       t1.serv_tp          ,
+       t1.incom_tp         ,
+       t1.serv_prod        ,
+       t1.serv_dtl         ,
+       --t1.warehouse        ,
+       t1.area             ,
+       t1.company          ,
+       t1.type             ,
+	   from_unixtime(unix_timestamp(),'yyyy-MM-dd HH:mm:ss') AS etl_time
+  from lbi_dpa.t_fi_dwms_out_sk_bill_detail_d_tmp01 t1
+union all
+select t3.account_no		,
+       t3.line_item        ,
+       t3.matnr            ,
+       t3.piece            ,
+       t3.vol              ,
+       t3.brgew            ,
+       t3.zpikmg           ,
+       t3.unit             ,
+       t3.settle_price     ,
+       t3.amt_after_tax    ,
+       t3.werks            ,
+       t3.lgort            ,
+       t3.property         ,
+       t3.jflx             ,
+       t3.vkorg            ,
+       t3.cust             ,
+       t3.cust_tp          ,
+       t3.zjsdat           ,
+       t3.serv_tp          ,
+       t3.incom_tp         ,
+       t3.serv_prod        ,
+       t3.serv_dtl         ,
+       --t3.warehouse        ,
+       t3.area             ,
+       t3.company          ,
+       t3.type             ,
+	   from_unixtime(unix_timestamp(),'yyyy-MM-dd HH:mm:ss') AS etl_time
+  from lbi_dpa.t_fi_dwms_out_sk_bill_detail_d_tmp03 t3 ;]]&gt;</hqlcdata></hql></job>

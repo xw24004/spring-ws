@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<jobs>
+    <job id="HP_MP_TSSA_MP_SUPPLIER_CONTRACT_MDM_D">
+        <dependresource id="44b0c2b7-8054-4375-b378-269e48dbaca0">
+            <private>
+                <resource desc="该文件不存在" id="-1" name="-" type="-"/>
+            </private>
+            <public>
+                <resource desc="suning-hive-inputformat.jar" id="60" name="suning-hive-inputformat.jar" path="ftp://192.168.107.77:21/opt/ftpcbt/common/1/suning-hive-inputformat.jar" type=".jar"/>
+            </public>
+        </dependresource>
+        <reader id="a5012409-076b-4ffc-aa1f-5499f98fd5a5">
+            <dataSourceId>20307</dataSourceId>
+            <param key="selectSql" value="select contract_id,supplier_code,contract_code,contract_doc,distribute_sys,supplier_name,cont_start_date,cont_end_date,contract_categ,com_code,invoice_date,factorge_date,security_mon,set_period,bil_date,original_cont_no,original_oa_no,con_operat_type,rebate_code,oth_cost_code,cont_re_date,contract_status,create_time,update_time,active,mem_no from supplier_contract_mdm where create_time between DATE_FORMAT(concat('${statisdate}','000000'), '%Y-%m-%d %H:%i:%s') and DATE_FORMAT(concat('${statisdate}','235959'), '%Y-%m-%d %H:%i:%s')"/>
+            <param key="encoding" value="UTF-8"/>
+            <param key="concurrency" value="1"/>
+            <param key="mysqlParams" value=""/>
+            <param key="fetchSize" value="10000"/>
+            <param key="splitMode" value="0"/>
+            <plugin>MysqlReader</plugin>
+        </reader>
+        <writer id="e2d28a66-6370-4391-b407-15a1c13ed583">
+            <dataSourceId>20120</dataSourceId>
+            <param key="tables" value="BI_SSA.TSSA_MP_SUPPLIER_CONTRACT_MDM_D"/>
+            <param key="preSql" value="use BI_SSA;alter table TSSA_MP_SUPPLIER_CONTRACT_MDM_D drop partition(statis_date='${statisdate}')"/>
+            <param key="postSql" value=""/>
+            <param key="encoding" value="UTF-8"/>
+            <param key="concurrency" value="1"/>
+            <param key="errorLimit" value="0"/>
+            <param key="fieldSplit" value="|$|"/>
+            <param key="lineSplit" value="|@|\n"/>
+            <param key="fileType" value="TXT"/>
+            <param key="codecClass" value="org.apache.hadoop.io.compress.DefaultCodec"/>
+            <param key="nullChar" value=""/>
+            <param key="partition" value="statis_date='${statisdate}'"/>
+            <plugin>HiveWriter</plugin>
+        </writer>
+    </job>
+</jobs>

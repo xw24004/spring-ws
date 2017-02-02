@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans 
+       http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+    
+    <bean id="user" class="com.xw.spring.framework.ioc.context.User">
+        <property name="birthday">
+            <value>2013-01-01</value>
+        </property>
+    </bean>
+    
+    <!-- 1.使用自定义属性编辑器 -->
+<!--     <bean id="customEditorConfigurer"
+        class="org.springframework.beans.factory.config.CustomEditorConfigurer">
+        <property name="customEditors">
+            <map>
+                <entry key="java.util.Date">
+                    <bean class="com.xw.spring.framework.ioc.context.DatePropertyEditor">
+                        <property name="format" value="yyyy-MM-dd"/>
+                    </bean>
+                </entry>
+            </map>
+        </property>
+    </bean> -->
+
+    <!-- 2.使用spring自带的CustomDateEditor -->
+    <bean class="org.springframework.beans.factory.config.CustomEditorConfigurer">
+        <property name="propertyEditorRegistrars">
+            <list>
+                <bean class="com.xw.spring.framework.ioc.context.DatePropertyEditorRegistrar" />
+            </list>
+        </property>
+    </bean>
+</beans>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?><job><dependresource id="084928e3-94d2-4214-be9e-bd3ae63f9124"><private/><public/></dependresource><executetemplate id="1"><template id="41ca4fb0-ee36-42a7-beb0-52772b26f65f" path="/user/cbt/resourcesdomain/hivecommon/GlobalVariable.py"/><template id="b6f32049-f50b-4d0d-bb5b-8c19c2faec9b" path="/user/cbt/resourcesdomain/hivecommon/defaultExecutor.py"/><template id="58b474f1-8bf8-47fb-a6af-1315098d9fde"/></executetemplate><hql databaseName="default" id="f6f12a1a-5fbb-4339-9089-2ecebf44cb57"><hqlcdata>&lt;![CDATA[--Copyright (C) 2002-2013 苏宁云商集团股份有限公司
+--Author: 13072936
+--Date: 2016-09-05 10:15:00
+--Description: 创建参数Hive表
+use sousuo;
+--ADD JAR /home/bigdata/software/hive/ext-lib/bi-hive-udf.jar;
+--CREATE TEMPORARY FUNCTION GET_FROM_PV AS 'com.suning.hive.bi.udf.UDFGetFromPV';
+
+-- 每个Map最大输入大小
+set mapred.max.split.size = 300000000;
+-- 每个Map最小输入大小
+set mapred.min.split.size = 100000000;
+-- 执行Map前进行小文件合并
+set hive.input.format = org.apache.hadoop.hive.ql.io.CombineHiveInputFormat;
+-- hive自动根据sql，选择使用common join或者map join
+set hive.auto.convert.join = false;
+-- hive 小表大小定义
+--set hive.mapjoin.smalltable.filesize = 50000000;
+-- 在Map-only的任务结束时合并小文件
+set hive.merge.mapfiles = true;
+-- 在Map-Reduce的任务结束时不合并小文件
+set hive.merge.mapredfiles = false;
+-- 合并文件的大小
+set hive.merge.size.per.task = 300000000;
+SET mapred.job.name = TF_WORD_CODE(${hivevar:statis_date});
+
+--@SqlStep: 创建词编码表
+create table if not exists sousuo.TF_WORD_CODE(
+KEYWORD string,
+WORD_NUMBER string,
+COUNT int,
+SEARCH_COUNT int,
+FIELD_FLAG string,
+FIELD_VALUE string,
+FIELD_ID string
+) ROW FORMAT DELIMITED FIELDS terminated by ',' stored as textfile;
+
+insert overwrite table sousuo.TF_WORD_CODE 
+SELECT t1.KEYWORD,t1.WORD_NUMBER,t2.COUNT AS COUNT, T3.SEARCH_COUNT,t4.FIELD_FLAG,t4.FIELD_VALUE,t4.FIELD_ID
+FROM sousuo.TF_WORD_STORE_MASTER t1 
+LEFT JOIN sousuo.TF_DIC_RESULT_COUNT t2 ON (t1.KEYWORD=t2.NAME) 
+LEFT JOIN sousuo.TF_HOT_WORD AS T3 ON (T1.KEYWORD = T3.KEYWORD)
+LEFT JOIN sousuo.TF_WORD_STORE_SLAVE_1 t4 ON(t1.KEYWORD=t4.KEYWORD) 
+WHERE t2.COUNT &gt; 4 AND t1.AGGREGATION_PAGE_FLAG='1';
+]]&gt;</hqlcdata></hql></job>
