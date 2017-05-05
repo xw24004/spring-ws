@@ -21,4 +21,14 @@ public class PerformaceHandler implements InvocationHandler {
         return obj;
     }
 
+	public Object getTarget() {
+		return target;
+	}
+
+	public void setTarget(Object target) {
+		this.target = target;
+	}
+    
+    
+
 }
