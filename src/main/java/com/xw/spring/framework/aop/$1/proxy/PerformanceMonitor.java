@@ -1,7 +1,7 @@
 package com.xw.spring.framework.aop.$1.proxy;
 
 public class PerformanceMonitor {
-    private static ThreadLocal<MethodPerformace> myThreadLocal = new ThreadLocal<>();
+    private static ThreadLocal<MethodPerformace> myThreadLocal = new ThreadLocal<MethodPerformace>();
 
     public static void begin(String method) {
         System.out.println("begin monitor " + method);

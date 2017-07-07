@@ -19,9 +19,11 @@ public class SaxDemo extends XmlDocument {
         try {
             SAXParser saxp = saxpf.newSAXParser();
             saxp.parse(inputStream, new mySaxHandler());
-        } catch (ParserConfigurationException | SAXException e) {
+        } catch (ParserConfigurationException  e) {
             e.printStackTrace();
-        } catch (IOException e) {
+        } catch (SAXException e){
+            e.printStackTrace();
+        }catch (IOException e) {
             e.printStackTrace();
         }
     }
