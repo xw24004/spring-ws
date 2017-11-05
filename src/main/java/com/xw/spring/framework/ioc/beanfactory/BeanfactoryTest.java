@@ -27,6 +27,7 @@ public class BeanfactoryTest {
     public void test1() {
         //beanFactory.containsBean("car");
      	Car car = beanFactory.getBean("car2",Car.class);
+        beanFactory.getBean(Car.class);
  //       Car car = beanFactory.getBean("car",Car.class,"brand","name");
 //        car.myDestory();
 //        Car car2 = (Car) beanFactory.getBean("car");

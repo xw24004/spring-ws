@@ -25,6 +25,8 @@ public class MainTest {
 		ApplicationContext ac = new ClassPathXmlApplicationContext("com/xw/spring/framework/aop/$0biaoqian/bean.xml");
 		User user = (User) ac.getBean("testBean");
 		System.out.println(user.getUserName());
+
+
 	}
 
 }

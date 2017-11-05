@@ -32,7 +32,7 @@ public class DomDemo extends XmlDocument {
                         Node userDetail = userMeta.item(k);
                         if (!userDetail.getNodeName().equals("#text")) {
                             System.out
-                                    .println(userMeta.item(k).getNodeName() + ":" + userMeta.item(k).getTextContent());
+                                    .println(userMeta.item(k).getNodeName() + ":" + userMeta.item(k));
                         }
                     }
                 }

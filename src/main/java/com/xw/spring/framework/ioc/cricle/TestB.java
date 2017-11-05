@@ -1,16 +1,16 @@
 package com.xw.spring.framework.ioc.cricle;
 
 public class TestB {
-	
-	
+
+
 	public TestB() {
 		System.out.println("调用了B的构造函数");
 	}
 
 	private TestA testA;
 
-	
-	
+
+
 	public void b() {
 		testA.a();
 	}

@@ -43,6 +43,27 @@
             <artifactId>spring-test</artifactId>
             <version>${spring-version}</version>
         </dependency> -->
+
+        <!--5.1 引入mybatis mybatis沒有3.0.5RELEASE版本，所以引入3.2.3版本 -->
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis</artifactId>
+            <version>3.2.3</version>
+            <type>jar</type>
+            <scope>compile</scope>
+        </dependency>
+        <!--5.2 引入以及mybatis和spring之间的沟通mybatis-spring1.2.0 -->
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis-spring</artifactId>
+            <version>1.2.0</version>
+        </dependency>
+        <!--5.3 引入了mybatis，自然会有关系型数据库的驱动包，这里我选用mysql数据库，所以要引入mysql-connector-java5.1.26 -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.26</version>
+        </dependency>        
         <dependency>
             <groupId>cglib</groupId>
             <artifactId>cglib</artifactId>
@@ -54,15 +75,21 @@
             <version>1.5.3</version>
         </dependency>
         <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.11</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>dom4j</groupId>
             <artifactId>dom4j</artifactId>
             <version>1.6.1</version>
-            <exclusions>
+<!--             <exclusions>
                 <exclusion>
                     <artifactId>xml-apis</artifactId>
                     <groupId>xml-apis</groupId>
                 </exclusion>
-            </exclusions>
+            </exclusions> -->
         </dependency>
     </dependencies>
     <build>
