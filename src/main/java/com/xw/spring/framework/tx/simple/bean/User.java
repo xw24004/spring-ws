@@ -1,4 +1,4 @@
-package com.xw.spring.framework.tx.bean;
+package com.xw.spring.framework.tx.simple.bean;
 
 public class User {
     private int id;
