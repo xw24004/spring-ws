@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module classpath="eclipse" classpath-dir="$MODULE_DIR$" org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
+  <component name="FacetManager">
+    <facet type="web" name="Web">
+      <configuration>
+        <descriptors>
+          <deploymentDescriptor name="web.xml" url="file://$MODULE_DIR$/src/main/webapp/WEB-INF/web.xml" />
+        </descriptors>
+        <webroots>
+          <root url="file://$MODULE_DIR$/src/main/webapp" relative="/" />
+        </webroots>
+        <sourceRoots>
+          <root url="file://$MODULE_DIR$/src/main/java" />
+          <root url="file://$MODULE_DIR$/src/main/resources" />
+        </sourceRoots>
+      </configuration>
+    </facet>
+    <facet type="Spring" name="Spring">
+      <configuration>
+        <fileset id="fileset" name="Spring Application Context" removed="false">
+          <file>file://$MODULE_DIR$/src/main/java/spring-config.xml</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/xw/spring/framework/ioc/beanfactory/beans.xml</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/xw/spring/framework/tx/applicationContext.xml</file>
+        </fileset>
+        <fileset id="fileset2" name="Spring Application Context (2)" removed="false">
+          <file>file://$MODULE_DIR$/src/main/java/com/xw/spring/framework/aop/$0biaoqian/bean.xml</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/xw/spring/framework/ioc/cricle/bean.xml</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/xw/spring/framework/tx/bean.xml</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/xw/spring/framework/ioc2/$5factorybean/beans.xml</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/xw/spring/framework/ioc/autowire/beans.xml</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/xw/spring/framework/aop/$4aspectj/$2aspectj/$1simple/beans.xml</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/xw/spring/framework/aop/$4aspectj/$2aspectj/$2basic/beans.xml</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/xw/spring/framework/ioc2/$3injectfun/beans.xml</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/xw/spring/framework/ioc2/$4depend/beans.xml</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/xw/spring/framework/ioc2/$6anno/beans.xml</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/xw/spring/framework/ioc2/$7context/$4event/beans.xml</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/xw/spring/framework/ioc/context/life/beans.xml</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/xw/spring/framework/aop/$2advice/introduce/beans.xml</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/xw/spring/framework/ioc/beanfactory/beans.xml</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/xw/spring/framework/ioc2/$2collect/beans.xml</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/xw/spring/framework/aop/$3advisor/beans.xml</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/xw/spring/framework/ioc/context/event/beans.xml</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/xw/spring/framework/ioc/context/beans.xml</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/xw/spring/framework/aop/$3advisor/autoproxy/beans.xml</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/xw/spring/framework/ioc2/$1simple/beans.xml</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/xw/spring/framework/aop/$2advice/beans.xml</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/xw/spring/framework/ioc/beanfactory/life/beans.xml</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/xw/spring/framework/aop/$4aspectj/$2aspectj/$3schema/beans.xml</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/xw/spring/framework/ioc/resource/beans1.xml</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/xw/spring/framework/ioc/resource/beans2.xml</file>
+          <file>file://$MODULE_DIR$/src/main/java/spring-config.xml</file>
+        </fileset>
+      </configuration>
+    </facet>
+  </component>
+</module>
