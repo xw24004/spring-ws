@@ -1,1 +1,2 @@
 http\://www.lexueba.com/schema/user=com.xw.spring.framework.aop.$0biaoqian.MyNamespaceHandler
+http\://www.springframework.org/schema/context=org.springframework.context.config.ContextNamespaceHandler
