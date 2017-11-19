@@ -1,20 +1,16 @@
 package com.xw.spring.framework.tx.simple;
 
-import javax.annotation.Resource;
-
+import com.xw.spring.framework.tx.simple.service.AccountService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.xw.spring.framework.tx.simple.service.AccountService;
+import javax.annotation.Resource;
 
-/**
- * Created by xuwei on 2017-11-15.
- */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:com/xw/spring/framework/tx/simple/applicationContext.xml")
-public class SpringTest {
+@ContextConfiguration("classpath:com/xw/spring/framework/tx/simple/applicationContext3.xml")
+public class SpringTest3 {
     @Resource(name = "accountService")
     private AccountService accountService;
 
